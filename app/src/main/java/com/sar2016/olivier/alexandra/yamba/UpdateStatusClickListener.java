@@ -21,10 +21,10 @@ public class UpdateStatusClickListener implements View.OnClickListener {
     private static final String TAG = "UpdateStatusClickListnr";
     private EditText textArea;
     private String recupText;
-    private UpdateStatusActivity mainActivity;
+    private UpdateStatusFragment mainActivity;
     private Twitter api;
 
-    public UpdateStatusClickListener(EditText textArea,String recupText,UpdateStatusActivity mainActivity){
+    public UpdateStatusClickListener(EditText textArea,String recupText,UpdateStatusFragment mainActivity){
         this.textArea = textArea;
         this.recupText = recupText;
         this.mainActivity = mainActivity;
@@ -52,7 +52,7 @@ public class UpdateStatusClickListener implements View.OnClickListener {
             @Override
             protected void onPostExecute(Object result){
                 //Tester si ca marche ou pas
-                Toast toast = Toast.makeText(mainActivity.getBaseContext(), "Votre nouveau statut est \""+result+"\".", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(mainActivity.getActivity().getBaseContext(), "Votre nouveau statut est \""+result+"\".", Toast.LENGTH_LONG);
                 toast.show();
             }
         };
