@@ -62,10 +62,8 @@ public class MainActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         if(savedInstanceState == null){
-            //loadTimelineFragment();
+            loadTimelineFragment();
         }
-        //startService(new Intent(getBaseContext(), GetNewStatusesService.class));
-
     }
 
     @Override
@@ -197,6 +195,9 @@ public class MainActivity extends AppCompatActivity
             }
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
+
+        startService(new Intent(getBaseContext(), GetNewStatusesService.class));
+
         super.onStart();
     }
 }
