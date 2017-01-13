@@ -43,7 +43,18 @@ public class UpdateStatusClickListener implements View.OnClickListener {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                Object result = mainActivity.getApi().setStatus(recupText);
+                Object result = null;
+                try {
+                    result = mainActivity.getApi().setStatus(recupText);
+                }
+                catch (Exception e) {
+                    result = e;
+                    //String s = this.getResources().getString(R.string.set_username_password);
+                    /*Toast toast = Toast.makeText(mainActivity.getActivity().getBaseContext(),
+                            e.getMessage(), Toast.LENGTH_SHORT);
+                    toast.show();*/
+                }
+
                 Log.d("ASYNC_TASK", result.toString());
                 return result;
             }
@@ -51,7 +62,17 @@ public class UpdateStatusClickListener implements View.OnClickListener {
             @Override
             protected void onPostExecute(Object result){
                 //Tester si ca marche ou pas
-                Toast toast = Toast.makeText(mainActivity.getActivity().getBaseContext(), "Votre nouveau statut est \""+result+"\".", Toast.LENGTH_LONG);
+                Toast toast;
+                if (result instanceof Exception) {
+                    toast = Toast.makeText(mainActivity.getActivity().getBaseContext(),
+                            ((Exception) result).getMessage(), Toast.LENGTH_SHORT);
+
+                    // If we have another exception than Unauthorized exception
+                    ((Exception) result).printStackTrace();
+                }
+                else
+                    toast = Toast.makeText(mainActivity.getActivity().getBaseContext(), "Votre nouveau statut est \""+result+"\".", Toast.LENGTH_LONG);
+
                 toast.show();
             }
         };

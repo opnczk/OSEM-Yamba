@@ -165,6 +165,11 @@ public class MainActivity extends AppCompatActivity
     private Twitter getTwitterObject() {
         String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
         String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
+       /* if (username.equals(getResources().getString(R.string.pref_default_username)) ||
+                password.equals(getResources().getString(R.string.pref_default_password))) {
+
+        }*/
+
         String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
         Twitter twitter = new Twitter(username, password);
         twitter.setAPIRootUrl(api);
