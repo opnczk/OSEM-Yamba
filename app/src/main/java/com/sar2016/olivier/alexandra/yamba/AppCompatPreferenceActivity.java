@@ -34,6 +34,9 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         //TODO GET FROM R.string.key_username
         String username = preferences.getString("username", "DEFAULT");
         String password = preferences.getString("password", "DEFAULT");
+        String api = preferences.getString("api", "DEFAULT");
+
+        Log.d("api", api);
 
         // Listener on preferences changings
         SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {

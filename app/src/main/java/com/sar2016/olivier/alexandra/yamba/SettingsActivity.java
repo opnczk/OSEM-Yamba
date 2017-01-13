@@ -180,6 +180,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             //TODO GET FROM R.string.key_username
             bindPreferenceSummaryToValue(findPreference("username"));
             bindPreferenceSummaryToValue(findPreference("password"));
+            bindPreferenceSummaryToValue(findPreference("api"));
         }
 
         @Override
