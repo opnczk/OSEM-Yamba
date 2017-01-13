@@ -23,31 +23,10 @@ import android.widget.Toast;
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     private AppCompatDelegate mDelegate;
-    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
-
-        // get preferences, here for testings, has to be in updateStatusActivity at the end
-        preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        //TODO GET FROM R.string.key_username
-        String username = preferences.getString("username", "DEFAULT");
-        String password = preferences.getString("password", "DEFAULT");
-        String api = preferences.getString("api", "DEFAULT");
-
-        Log.d("api", api);
-
-        // Listener on preferences changings
-        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-                SharedPreferences.Editor editor = preferences.edit();
-                Toast toast = Toast.makeText(getApplicationContext(), "Settings have changed !", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        };
-        preferences.registerOnSharedPreferenceChangeListener(listener);
         super.onCreate(savedInstanceState);
     }
 

@@ -22,14 +22,15 @@ public class UpdateStatusClickListener implements View.OnClickListener {
     private EditText textArea;
     private String recupText;
     private UpdateStatusActivity mainActivity;
-    private Twitter api;
+    //private Twitter api;
 
     public UpdateStatusClickListener(EditText textArea,String recupText,UpdateStatusActivity mainActivity){
         this.textArea = textArea;
         this.recupText = recupText;
         this.mainActivity = mainActivity;
-        this.api = new Twitter("student", "password");
-        this.api.setAPIRootUrl("http://yamba.newcircle.com/api");
+       /* this.api = new Twitter("student", "password");
+        this.api.setAPIRootUrl("http://yamba.newcircle.com/api");*/
+
     }
 
     public void onClick(View view) {
@@ -44,7 +45,7 @@ public class UpdateStatusClickListener implements View.OnClickListener {
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                Object result = api.setStatus(recupText);
+                Object result = mainActivity.getApi().setStatus(recupText);
                 Log.d("ASYNC_TASK", result.toString());
                 return result;
             }
