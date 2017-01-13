@@ -189,9 +189,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-                SharedPreferences.Editor editor = preferences.edit();
-                Toast toast = Toast.makeText(getApplicationContext(), key + " in settings have changed !", Toast.LENGTH_SHORT);
-                toast.show();
+                api = null;
             }
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
