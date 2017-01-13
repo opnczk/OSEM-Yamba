@@ -1,9 +1,11 @@
 package com.sar2016.olivier.alexandra.yamba;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import winterwell.jtwitter.Twitter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, UpdateStatusFragment.OnFragmentInteractionListener, TimelineFragment.OnFragmentInteractionListener{
@@ -26,7 +31,6 @@ public class MainActivity extends AppCompatActivity
     private View navHeader;
     private Toolbar toolbar;
 
-    public static int navItemIndex = 0;
 
     private static final String TAG_TIMELINE = "timeline";
     private static final String TAG_UPDATE = "update";
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean shouldLoadHomeOnBackPress = true;
     private Handler mHandler;
+    private SharedPreferences preferences;
+    private Twitter api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +62,10 @@ public class MainActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         if(savedInstanceState == null){
-            CURRENT_TAG = TAG_TIMELINE;
-            loadTimelineFragment();
+            //loadTimelineFragment();
         }
         //startService(new Intent(getBaseContext(), GetNewStatusesService.class));
+
     }
 
     @Override
@@ -152,11 +158,40 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    /*private Fragment getUpdateStatusFragment(){
-
+    public SharedPreferences getPreferences() {
+        return this.preferences;
     }
 
-    private void loadUpdateStatusFragment(){
+    private Twitter getTwitterObject() {
+        String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
+        String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
+        String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
+        Twitter twitter = new Twitter(username, password);
+        twitter.setAPIRootUrl(api);
+        return twitter;
+    }
 
-    }*/
+    public Twitter getApi() {
+        return this.api;
+    }
+
+    @Override
+    protected void onStart() {
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        // API
+        api = this.getTwitterObject();
+
+        // Listener on preferences changings
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+                SharedPreferences.Editor editor = preferences.edit();
+                Toast toast = Toast.makeText(getApplicationContext(), key + " in settings have changed !", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+        super.onStart();
+    }
 }

@@ -37,8 +37,7 @@ public class UpdateStatusFragment extends Fragment {
     private Button button;
     private EditText textArea;
     private String recupText;
-    private SharedPreferences preferences;
-    private Twitter api;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -136,37 +135,9 @@ public class UpdateStatusFragment extends Fragment {
         int orange = ResourcesCompat.getColor(getResources(), R.color.colorOrange, null);
         int red = ResourcesCompat.getColor(getResources(), R.color.colorRed, null);
         textArea.addTextChangedListener(new UpdateStatusTextWatcher(this.textArea, green, orange, red));
-        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-        // API
-        api = this.getTwitterObject();
-
-        // Listener on preferences changings
-        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-                SharedPreferences.Editor editor = preferences.edit();
-                Toast toast = Toast.makeText(getContext(), key + " in settings have changed !", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        };
-        preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public SharedPreferences getPreferences() {
-        return this.preferences;
-    }
-
-    private Twitter getTwitterObject() {
-        String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
-        String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
-        String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
-        Twitter twitter = new Twitter(username, password);
-        twitter.setAPIRootUrl(api);
-        return twitter;
-    }
-
-    public Twitter getApi() {
-        return this.api;
+    public Twitter getApi(){
+        return ((MainActivity)getActivity()).getApi();
     }
 }
