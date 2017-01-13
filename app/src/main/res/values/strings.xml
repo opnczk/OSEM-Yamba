@@ -88,4 +88,11 @@
     <string name="pref_default_password">Password</string>
     <string name="pref_summary_password">Please enter your password</string>
     <string name="key_password">password</string>
+
+    <string name="api_url">http://yamba.newcircle.com/api</string>
+    <string name="key_api_url">api</string>
+    <string name="pref_api_url">API</string>
+
+    <!-- Provisoir -->
+    <string name="button_settings">Settings</string>
 </resources>
