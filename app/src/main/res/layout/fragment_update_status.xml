@@ -23,6 +23,12 @@
         android:textAlignment="center"
         android:textSize="@dimen/double_basic_height"
         android:id="@+id/textView" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:onClick="sendMessage" />
+
 
     <Button
         android:layout_width="match_parent"
@@ -32,13 +38,6 @@
         android:text="@string/update"
         android:textSize="@dimen/one_half_basic_height"
         android:id="@+id/update_status_button" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:onClick="sendMessage" />
-
 
     <EditText
         android:layout_width="match_parent"
