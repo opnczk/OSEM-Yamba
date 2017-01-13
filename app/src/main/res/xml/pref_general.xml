@@ -31,7 +31,7 @@
         android:singleLine="true"
         android:title="@string/pref_title_password" />
 
-    <Preference
+    <EditTextPreference
         android:selectable="false"
         android:enabled="true"
         android:summary="@string/api_url"

@@ -11,9 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <activity android:name=".UpdateStatusActivity">
-        </activity>
-
         <service android:name=".GetNewStatusesService" />
 
         <activity
