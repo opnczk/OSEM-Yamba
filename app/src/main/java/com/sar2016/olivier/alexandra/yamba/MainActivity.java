@@ -2,6 +2,7 @@ package com.sar2016.olivier.alexandra.yamba;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +22,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import winterwell.jtwitter.Twitter;
 
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     private Handler mHandler;
     private SharedPreferences preferences;
     private Twitter api;
+
+    private TweetDB tweetDataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,23 @@ public class MainActivity extends AppCompatActivity
         if(savedInstanceState == null){
             loadTimelineFragment();
         }
+
+        // DB TEST
+       // this.deleteDatabase("tweets.db");
+        tweetDataBase = new TweetDB(this);
+        tweetDataBase.open();
+        Tweet tweetOrigine = new Tweet("Originel", "Originel");
+
+        long id = tweetDataBase.insertTweet(tweetOrigine);
+
+        Log.d("TWEET ORIGINEL", "" + id + " usr : " + tweetOrigine.getUser() + ", txt : "+ tweetOrigine.getTxt());
+
+        Tweet tweetUpdate = new Tweet("Update", "Update");
+        tweetDataBase.updateTweet(id, tweetUpdate);
+
+        Log.d("TWEET UPDATE", id +" usr : " + tweetUpdate.getUser() + ", txt : "+ tweetUpdate.getTxt());
+
+        tweetDataBase.close();
     }
 
     @Override
