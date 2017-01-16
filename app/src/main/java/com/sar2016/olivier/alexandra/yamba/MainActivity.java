@@ -80,22 +80,6 @@ public class MainActivity extends AppCompatActivity
 
         startService(new Intent(getBaseContext(), GetNewStatusesService.class));
 
-        // DB TEST
-       // this.deleteDatabase("tweets.db");
-        tweetDataBase = new TweetDB(this);
-        tweetDataBase.open();
-        Tweet tweetOrigine = new Tweet("Originel", "Originel");
-
-        long id = tweetDataBase.insertTweet(tweetOrigine);
-
-        Log.d("TWEET ORIGINEL", "" + id + " usr : " + tweetOrigine.getUser() + ", txt : "+ tweetOrigine.getTxt());
-
-        Tweet tweetUpdate = new Tweet("Update", "Update");
-        tweetDataBase.updateTweet(id, tweetUpdate);
-
-        Log.d("TWEET UPDATE", id +" usr : " + tweetUpdate.getUser() + ", txt : "+ tweetUpdate.getTxt());
-
-        tweetDataBase.close();
     }
 
     @Override
