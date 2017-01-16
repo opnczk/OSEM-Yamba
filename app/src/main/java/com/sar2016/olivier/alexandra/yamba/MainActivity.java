@@ -3,6 +3,7 @@ package com.sar2016.olivier.alexandra.yamba;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     private Twitter api;
     private List<Twitter.Status> timelineList = new ArrayList<>();
 
+    private TweetDB tweetDataBase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +79,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         startService(new Intent(getBaseContext(), GetNewStatusesService.class));
+
+        // DB TEST
+       // this.deleteDatabase("tweets.db");
+        tweetDataBase = new TweetDB(this);
+        tweetDataBase.open();
+        Tweet tweetOrigine = new Tweet("Originel", "Originel");
+
+        long id = tweetDataBase.insertTweet(tweetOrigine);
+
+        Log.d("TWEET ORIGINEL", "" + id + " usr : " + tweetOrigine.getUser() + ", txt : "+ tweetOrigine.getTxt());
+
+        Tweet tweetUpdate = new Tweet("Update", "Update");
+        tweetDataBase.updateTweet(id, tweetUpdate);
+
+        Log.d("TWEET UPDATE", id +" usr : " + tweetUpdate.getUser() + ", txt : "+ tweetUpdate.getTxt());
+
+        tweetDataBase.close();
     }
 
     @Override
