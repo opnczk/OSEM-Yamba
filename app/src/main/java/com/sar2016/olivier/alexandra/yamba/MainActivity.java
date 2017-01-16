@@ -1,5 +1,6 @@
 package com.sar2016.olivier.alexandra.yamba;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -9,6 +10,8 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,29 +24,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import winterwell.jtwitter.Twitter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, UpdateStatusFragment.OnFragmentInteractionListener, TimelineFragment.OnFragmentInteractionListener{
 
+    static Context context;
     private NavigationView navigationView;
-    //private DrawerLayout drawer;
     private View navHeader;
     private Toolbar toolbar;
 
 
-    private static final String TAG_TIMELINE = "timeline";
-    private static final String TAG_UPDATE = "update";
+    public static final String TAG_TIMELINE = "timeline";
+    public static final String TAG_UPDATE = "update";
     public static String CURRENT_TAG = TAG_TIMELINE;
 
     private boolean shouldLoadHomeOnBackPress = true;
     private Handler mHandler;
     private SharedPreferences preferences;
     private Twitter api;
+    private List<Twitter.Status> timelineList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,12 +66,15 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mHandler = new Handler();
-
+        
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         if(savedInstanceState == null){
             loadTimelineFragment();
         }
+
+        startService(new Intent(getBaseContext(), GetNewStatusesService.class));
     }
 
     @Override
@@ -120,7 +131,12 @@ public class MainActivity extends AppCompatActivity
 
     private void loadTimelineFragment(){
 
-        if(getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null){
+        Fragment frag = getSupportFragmentManager().findFragmentByTag(CURRENT_TAG);
+        if(frag != null){
+            /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.show(frag);
+            fragmentTransaction.commit();*/
             return;
         }
 
@@ -194,8 +210,27 @@ public class MainActivity extends AppCompatActivity
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
 
-        startService(new Intent(getBaseContext(), GetNewStatusesService.class));
 
         super.onStart();
     }
+
+    public void updateTimeline(List<Twitter.Status> list){
+        if(list != null)
+            this.timelineList = list;
+
+        try {
+            FragmentManager fm = getSupportFragmentManager();
+            TimelineFragment currentFragment = (TimelineFragment) fm.findFragmentByTag(MainActivity.TAG_TIMELINE);
+            if(currentFragment != null && currentFragment.isVisible()) {
+                currentFragment.setTimeline(this.timelineList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public List<Twitter.Status> getTimelineList(){
+        return this.timelineList;
+    }
+
 }

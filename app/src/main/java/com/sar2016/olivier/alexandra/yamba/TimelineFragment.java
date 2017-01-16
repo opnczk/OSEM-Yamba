@@ -4,9 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import winterwell.jtwitter.Twitter;
 
 
 /**
@@ -28,6 +36,8 @@ public class TimelineFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private ListView mListView;
+    private List<Twitter.Status> mList;
 
     public TimelineFragment() {
         // Required empty public constructor
@@ -64,7 +74,15 @@ public class TimelineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_timeline, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_timeline, container, false);
+        try {
+            mList = ((MainActivity)getActivity()).getTimelineList();
+            this.loadTimeline();
+        }catch(Exception e){
+            Log.e("FUCK", e.getMessage());
+        }
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -83,12 +101,24 @@ public class TimelineFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            mList = ((MainActivity)getActivity()).getTimelineList();
+            this.loadTimeline();
+        }catch(Exception e){
+            Log.e("FUCK", e.getMessage());
+        }
     }
 
     /**
@@ -104,5 +134,23 @@ public class TimelineFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setTimeline(List<Twitter.Status> list){
+        mList = ((MainActivity)getActivity()).getTimelineList();
+        this.loadTimeline();
+    }
+
+    private void loadTimeline(){
+        //final ArrayList<Tweet> recipeList = Tweet.getRecipesFromFile("recipes.json", this);
+        mListView = (ListView) getActivity().findViewById(R.id.timeline);
+        String[] listItems = new String[mList.size()];
+        for(int i = 0; i < mList.size(); i++){
+            Twitter.Status tweet = mList.get(i);
+            listItems[i] = tweet.getText();
+            Log.d("SET_TIMELINE", tweet.getText());
+        }
+        ArrayAdapter adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, listItems);
+        mListView.setAdapter(adapter);
     }
 }

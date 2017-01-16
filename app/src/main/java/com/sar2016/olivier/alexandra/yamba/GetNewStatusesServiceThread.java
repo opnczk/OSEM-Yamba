@@ -21,7 +21,12 @@ public class GetNewStatusesServiceThread extends Thread {
     @Override
     public void run() {
         while(running) {
-            service.methodToExec();
+            try {
+                service.methodToExec();
+            }catch(Exception e){
+                service.connected = false;
+                e.printStackTrace();
+            }
             try {
                 Thread.sleep(30000);
             } catch (InterruptedException e) {

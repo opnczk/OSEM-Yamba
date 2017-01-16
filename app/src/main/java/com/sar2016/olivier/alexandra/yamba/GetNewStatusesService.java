@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import java.util.List;
@@ -18,6 +21,7 @@ import winterwell.jtwitter.Twitter;
 
 public class GetNewStatusesService extends Service{
     private static final String TAG = "GetNewStatusesService";
+    public boolean connected = false;
     //private Twitter api;
     private GetNewStatusesServiceThread wrappingThread;
     private SharedPreferences preferences;
@@ -50,10 +54,20 @@ public class GetNewStatusesService extends Service{
 
     public void methodToExec(){
 
-        Log.d(TAG, "Method To Exec");
-        List<Twitter.Status> statuses = api.getHomeTimeline();
-        for(int i = 0; i < statuses.size(); i++){
-            Log.d("SERVICE", statuses.get(i).getText());
+        if(!connected){
+            api = this.getTwitterObject();
+        }else {
+            Log.d(TAG, "Method To Exec");
+            //TimelineFragment timeline =
+            final List<Twitter.Status> statuses = api.getHomeTimeline();
+            ((MainActivity) MainActivity.context).runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    ((MainActivity) MainActivity.context).updateTimeline(statuses);
+                }
+            });
+
         }
     }
 
@@ -77,6 +91,7 @@ public class GetNewStatusesService extends Service{
         String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
         Twitter twitter = new Twitter(username, password);
         twitter.setAPIRootUrl(api);
+        connected = true;
         return twitter;
     }
 }
