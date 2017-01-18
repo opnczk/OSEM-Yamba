@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity
     private Handler mHandler;
     private SharedPreferences preferences;
     private Twitter api;
-    private List<Twitter.Status> timelineList = new ArrayList<>();
 
     private TweetDB tweetDataBase;
 
@@ -77,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         if(savedInstanceState == null){
             loadTimelineFragment();
         }
+
+        this.tweetDataBase = new TweetDB(this);
 
         startService(new Intent(getBaseContext(), GetNewStatusesService.class));
 
@@ -184,10 +185,6 @@ public class MainActivity extends AppCompatActivity
     private Twitter getTwitterObject() {
         String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
         String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
-       /* if (username.equals(getResources().getString(R.string.pref_default_username)) ||
-                password.equals(getResources().getString(R.string.pref_default_password))) {
-
-        }*/
 
         String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
         Twitter twitter = new Twitter(username, password);
@@ -215,27 +212,46 @@ public class MainActivity extends AppCompatActivity
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
 
-
+        this.updateTimeline();
         super.onStart();
     }
 
-    public void updateTimeline(List<Twitter.Status> list){
-        if(list != null)
-            this.timelineList = list;
-
+    public void updateTimeline(){
         try {
             FragmentManager fm = getSupportFragmentManager();
             TimelineFragment currentFragment = (TimelineFragment) fm.findFragmentByTag(MainActivity.TAG_TIMELINE);
             if(currentFragment != null && currentFragment.isVisible()) {
-                currentFragment.setTimeline(this.timelineList);
+                currentFragment.setTimeline(this.getTimelineList());
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public List<Twitter.Status> getTimelineList(){
-        return this.timelineList;
+    public List<Tweet> getTimelineList(){
+        this.tweetDataBase.open();
+        List<Tweet> tweets = this.tweetDataBase.getAll();
+        this.tweetDataBase.close();
+
+        return tweets;
     }
 
+    public void pushToDB(List<Twitter.Status> statuses) {
+        this.tweetDataBase.open();
+        this.tweetDataBase.deleteAll();
+
+        Log.d("PUSHING TO DB",""+statuses.size());
+        for(int i = 0 ; i < statuses.size(); i++){
+            this.tweetDataBase.insertTweet(new Tweet(statuses.get(i)));
+        }
+        this.tweetDataBase.close();
+    }
+
+    public void pushToDb(Tweet tweet){
+        this.tweetDataBase.open();
+
+        this.tweetDataBase.insertTweet(tweet);
+
+        this.tweetDataBase.close();
+    }
 }

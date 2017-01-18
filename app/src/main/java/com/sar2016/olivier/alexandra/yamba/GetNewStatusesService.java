@@ -19,7 +19,7 @@ import winterwell.jtwitter.Twitter;
  * Created by olivier on 10/01/17.
  */
 
-public class GetNewStatusesService extends Service{
+public class GetNewStatusesService extends Service {
     private static final String TAG = "GetNewStatusesService";
     public boolean connected = false;
     //private Twitter api;
@@ -58,13 +58,15 @@ public class GetNewStatusesService extends Service{
             api = this.getTwitterObject();
         }else {
             Log.d(TAG, "Method To Exec");
-            //TimelineFragment timeline =
+
             final List<Twitter.Status> statuses = api.getHomeTimeline();
+            ((MainActivity)MainActivity.context).pushToDB(statuses);
+
             ((MainActivity) MainActivity.context).runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
-                    ((MainActivity) MainActivity.context).updateTimeline(statuses);
+                    ((MainActivity) MainActivity.context).updateTimeline();
                 }
             });
 

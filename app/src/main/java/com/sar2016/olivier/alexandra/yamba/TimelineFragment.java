@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class TimelineFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private ListView mListView;
-    private List<Twitter.Status> mList;
+    private List<Tweet> mList;
 
     public TimelineFragment() {
         // Required empty public constructor
@@ -117,7 +118,7 @@ public class TimelineFragment extends Fragment {
             mList = ((MainActivity)getActivity()).getTimelineList();
             this.loadTimeline();
         }catch(Exception e){
-            Log.e("FUCK", e.getMessage());
+            Log.e("Error Fragment on start", e.getMessage());
         }
     }
 
@@ -136,19 +137,21 @@ public class TimelineFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void setTimeline(List<Twitter.Status> list){
+    public void setTimeline(List<Tweet> list){
         mList = ((MainActivity)getActivity()).getTimelineList();
         this.loadTimeline();
     }
 
     private void loadTimeline(){
         //final ArrayList<Tweet> recipeList = Tweet.getRecipesFromFile("recipes.json", this);
+
         mListView = (ListView) getActivity().findViewById(R.id.timeline);
         String[] listItems = new String[mList.size()];
         for(int i = 0; i < mList.size(); i++){
-            Twitter.Status tweet = mList.get(i);
-            listItems[i] = tweet.getText();
-            Log.d("SET_TIMELINE", tweet.getText());
+            Tweet tweet = mList.get(i);
+            listItems[i] = tweet.getTxt();
+            Log.d("SET_TIMELINE", tweet.getTxt());
+            Log.d("Date of tweet", new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(tweet.getCreatedAt()));
         }
         ArrayAdapter adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, listItems);
         mListView.setAdapter(adapter);

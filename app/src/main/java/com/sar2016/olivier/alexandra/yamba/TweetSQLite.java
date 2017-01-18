@@ -10,7 +10,7 @@ import android.util.Log;
  */
 
 public class TweetSQLite extends SQLiteOpenHelper {
-    private static final int VERSION_DB = 27;
+    private static final int VERSION_DB = 31;
     private static final String DB_NAME = "tweets.db";
 
     private static final String TWEETS_TABLE = "tweets_table";
@@ -22,8 +22,8 @@ public class TweetSQLite extends SQLiteOpenHelper {
 
     private static final String CREATE_DB = "CREATE TABLE "  + TWEETS_TABLE
             + " (" +
-                ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                CREATED_AT + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                ID + " INTEGER PRIMARY KEY, " +
+                CREATED_AT + " DATETIME, " +
                 TXT + " TEXT NOT NULL, " +
                 USER + " TEXT NOT NULL" +
             ");";

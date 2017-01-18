@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.ParseException;
@@ -56,7 +57,16 @@ public class TweetDB {
         ContentValues values = new ContentValues();
         values.put(COL_TXT, tweet.getTxt());
         values.put(COL_USER, tweet.getUser());
-        return db.insert(TWEETS_TABLE, null, values);
+        values.put(COL_CREATED_AT, new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(tweet.getCreatedAt()));
+        long id = -1;
+        try {
+            id = db.insertOrThrow(TWEETS_TABLE, null, values);
+        }catch(Exception e){
+            Log.e("Error inserting", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return id;
     }
 
     public int updateTweet(long id, Tweet tweet) {
@@ -85,6 +95,7 @@ public class TweetDB {
 
         ArrayList<Tweet> tweets = new ArrayList<Tweet>();
 
+        c.moveToFirst();
         for (int i = 0; i < c.getCount(); i++) {
             c.moveToPosition(i);
             Tweet tweet = cursorToTweet(c);
@@ -102,8 +113,6 @@ public class TweetDB {
     private Tweet cursorToTweet(Cursor c) {
         if (c.getCount() == 0)
             return null;
-
-        c.moveToFirst();
 
         // Create tweet object from DB
         Tweet tweet = new Tweet();

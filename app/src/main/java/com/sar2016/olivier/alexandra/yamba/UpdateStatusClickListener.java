@@ -66,7 +66,6 @@ public class UpdateStatusClickListener implements View.OnClickListener {
                 if (result instanceof Exception) {
                     toast = Toast.makeText(mainActivity.getActivity().getBaseContext(),
                             ((Exception) result).getMessage(), Toast.LENGTH_SHORT);
-
                     // If we have another exception than Unauthorized exception
                     ((Exception) result).printStackTrace();
                 }

@@ -2,34 +2,32 @@ package com.sar2016.olivier.alexandra.yamba;
 
 import java.util.Date;
 
+import winterwell.jtwitter.Twitter;
+
 /**
  * Created by alexandra on 16/01/17.
  */
 
 public class Tweet {
-    private int id;
+    private long id;
     private Date created_at;
     private String txt;
     private String user;
 
     public Tweet() {}
 
-    public Tweet(Date created_at, String txt, String user) {
-        this.created_at = created_at;
-        this.txt = txt;
-        this.user = user;
+    public Tweet(Twitter.Status status){
+        this.txt = status.getText();
+        this.id = status.getId();
+        this.user = status.getUser().toString();
+        this.setCreatedAt(status.getCreatedAt());
     }
 
-    public Tweet(String txt, String user) {
-        this.txt = txt;
-        this.user = user;
-    }
-
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
