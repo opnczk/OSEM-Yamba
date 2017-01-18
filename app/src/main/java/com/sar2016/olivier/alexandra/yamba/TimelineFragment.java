@@ -153,7 +153,8 @@ public class TimelineFragment extends Fragment {
             Log.d("SET_TIMELINE", tweet.getTxt());
             Log.d("Date of tweet", new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(tweet.getCreatedAt()));
         }
-        ArrayAdapter adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, listItems);
+
+        TweetAdapter adapter = new TweetAdapter(getActivity().getApplicationContext(), mList);
         mListView.setAdapter(adapter);
     }
 }

@@ -31,9 +31,6 @@ public class UpdateStatusTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count){
-        /*int green = ResourcesCompat.getColor(Resources.getSystem(), R.color.colorGreen, null);
-        int orange = ResourcesCompat.getColor(Resources.getSystem(), R.color.colorOrange, null);
-        int red = ResourcesCompat.getColor(Resources.getSystem(), R.color.colorRed, null);*/
         if(s.length() > 140){
             this.editText.setTextColor(Color.RED);
             this.editText.setTextColor(red);

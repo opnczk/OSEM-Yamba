@@ -139,10 +139,6 @@ public class MainActivity extends AppCompatActivity
 
         Fragment frag = getSupportFragmentManager().findFragmentByTag(CURRENT_TAG);
         if(frag != null){
-            /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-            fragmentTransaction.show(frag);
-            fragmentTransaction.commit();*/
             return;
         }
 
