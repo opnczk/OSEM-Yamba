@@ -1,5 +1,6 @@
 package com.sar2016.olivier.alexandra.yamba;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ public class GetNewStatusesService extends Service {
     //private Twitter api;
     private GetNewStatusesServiceThread wrappingThread;
     private SharedPreferences preferences;
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
     private Twitter api;
 
 
@@ -42,8 +44,33 @@ public class GetNewStatusesService extends Service {
         // API
         api = this.getTwitterObject();
 
-        this.wrappingThread = new GetNewStatusesServiceThread(this);
-        this.wrappingThread.start();
+        // Listener on preferences changings
+
+        if(preferences.getBoolean("switch_timeline", true)) {
+            this.wrappingThread = new GetNewStatusesServiceThread(this);
+            this.wrappingThread.start();
+        }
+
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+                Log.d("changedbis",key);
+
+                if(key.equals("switch_timeline")){
+                    boolean b = preferences.getBoolean(key, true);
+                    if(!b) {
+                        Log.d("Servicec", "Stop");
+                        wrappingThread.stopThread();
+                    }else{
+                        Log.d("Servicec", "Start");
+                        wrappingThread = new GetNewStatusesServiceThread(GetNewStatusesService.this);
+                        wrappingThread.start();
+                    }
+                }
+                api = getTwitterObject();
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
@@ -78,6 +105,7 @@ public class GetNewStatusesService extends Service {
         wrappingThread.stopThread();
         super.onDestroy();
     }
+
     public SharedPreferences getPreferences() {
         return this.preferences;
     }
@@ -85,12 +113,11 @@ public class GetNewStatusesService extends Service {
     private Twitter getTwitterObject() {
         String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
         String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
-       /* if (username.equals(getResources().getString(R.string.pref_default_username)) ||
-                password.equals(getResources().getString(R.string.pref_default_password))) {
 
-        }*/
+        Boolean isEnabled = this.getPreferences().getBoolean("switch_timeline", true);
 
         String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
+
         Twitter twitter = new Twitter(username, password);
         twitter.setAPIRootUrl(api);
         connected = true;

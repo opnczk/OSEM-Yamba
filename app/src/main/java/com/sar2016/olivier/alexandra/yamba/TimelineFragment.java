@@ -81,7 +81,7 @@ public class TimelineFragment extends Fragment {
             mList = ((MainActivity)getActivity()).getTimelineList();
             this.loadTimeline();
         }catch(Exception e){
-            Log.e("FUCK", e.getMessage());
+            Log.e("TimelineFrag createView", e.getMessage());
         }
         return v;
     }

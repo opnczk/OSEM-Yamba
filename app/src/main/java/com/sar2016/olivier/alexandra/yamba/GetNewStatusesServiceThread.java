@@ -14,7 +14,7 @@ public class GetNewStatusesServiceThread extends Thread {
 
     public GetNewStatusesServiceThread(GetNewStatusesService service){
         this.service = service;
-        this.running = true;
+        this.running = service.getPreferences().getBoolean("switch_timeline", true);
         Log.d(TAG, "created");
     }
 
@@ -37,6 +37,5 @@ public class GetNewStatusesServiceThread extends Thread {
 
     public void stopThread(){
         this.running = false;
-        this.interrupt();
     }
 }

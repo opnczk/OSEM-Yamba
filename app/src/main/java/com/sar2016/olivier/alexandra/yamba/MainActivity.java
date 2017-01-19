@@ -1,5 +1,6 @@
 package com.sar2016.olivier.alexandra.yamba;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,7 +35,7 @@ import winterwell.jtwitter.Twitter;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, UpdateStatusFragment.OnFragmentInteractionListener, TimelineFragment.OnFragmentInteractionListener{
 
-    static Context context;
+    protected static Context context;
     private NavigationView navigationView;
     private View navHeader;
     private Toolbar toolbar;
@@ -42,11 +43,12 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG_TIMELINE = "timeline";
     public static final String TAG_UPDATE = "update";
-    public static String CURRENT_TAG = TAG_TIMELINE;
+    public static String CURRENT_TAG = TAG_UPDATE;
 
     private boolean shouldLoadHomeOnBackPress = true;
     private Handler mHandler;
     private SharedPreferences preferences;
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
     private Twitter api;
 
     private TweetDB tweetDataBase;
@@ -79,7 +81,27 @@ public class MainActivity extends AppCompatActivity
 
         this.tweetDataBase = new TweetDB(this);
 
-        startService(new Intent(getBaseContext(), GetNewStatusesService.class));
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        // API
+        api = this.getTwitterObject();
+
+        // Listener on preferences changings
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+                Log.d("Changed on Main", key);
+                Log.d("boolean", ""+preferences.getBoolean("switch_timeline", true));
+                if(key == "switch_timeline"){
+
+                }
+                api = getTwitterObject();
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+
+        if(preferences.getBoolean("switch_timeline", true) == true)
+            startService(new Intent(getBaseContext(), GetNewStatusesService.class));
 
     }
 
@@ -127,7 +149,9 @@ public class MainActivity extends AppCompatActivity
             this.CURRENT_TAG = this.TAG_TIMELINE;
         } else if (id == R.id.nav_gallery) {
             this.CURRENT_TAG = this.TAG_UPDATE;
-        }
+        }/* else if( id == R.id.switchTime){
+            // start stop
+        }*/
 
         this.loadTimelineFragment();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -182,9 +206,15 @@ public class MainActivity extends AppCompatActivity
         String username = this.getPreferences().getString(getResources().getString(R.string.key_username), "DEFAULT");
         String password = this.getPreferences().getString(getResources().getString(R.string.key_password), "DEFAULT");
 
+        Boolean b = this.getPreferences().getBoolean("switch_timeline", true);
         String api = this.getPreferences().getString(getResources().getString(R.string.key_api_url), "DEFAULT");
         Twitter twitter = new Twitter(username, password);
         twitter.setAPIRootUrl(api);
+
+        Log.d("Prefs", username);
+        Log.d("Prefs", password);
+        Log.d("Prefs", api);
+        Log.d("Prefs", b.toString());
         return twitter;
     }
 
@@ -194,19 +224,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStart() {
-        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        // API
-        api = this.getTwitterObject();
-
-        // Listener on preferences changings
-        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-                api = null;
-            }
-        };
-        preferences.registerOnSharedPreferenceChangeListener(listener);
 
         this.updateTimeline();
         super.onStart();
